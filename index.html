@@ -3,77 +3,104 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SBIフィードバック作成ツール Pro</title>
+    <title>SBI Feedback Tool</title>
+    <script type="module" crossorigin src="/assets/index-B1bG087U.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-Bh8Lb5WX.css">
     <style>
-        body { font-family: sans-serif; background-color: #f0f2f5; padding: 20px; color: #1a1a1a; line-height: 1.6; }
-        .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        h1 { font-size: 1.8rem; text-align: center; color: #1e3a8a; margin-bottom: 30px; border-bottom: 2px solid #1e3a8a; padding-bottom: 10px; }
-        h2 { font-size: 1.1rem; color: #1e3a8a; background: #e0e7ff; padding: 8px 15px; border-radius: 5px; margin-top: 30px; }
-        .section { margin-bottom: 25px; }
-        label { font-weight: bold; display: block; margin-bottom: 8px; font-size: 0.95rem; color: #374151; }
-        input, textarea, select { width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; box-sizing: border-box; font-size: 1rem; transition: border 0.3s; }
-        input:focus, textarea:focus { border-color: #3b82f6; outline: none; }
-        textarea { height: 100px; resize: vertical; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .btn { background: linear-gradient(135deg, #3b82f6 0%, #1e3a8a 100%); color: white; border: none; padding: 18px; width: 100%; border-radius: 8px; font-size: 1.2rem; font-weight: bold; cursor: pointer; margin-top: 30px; transition: transform 0.2s; }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
-        .hint { font-size: 0.8rem; color: #6b7280; font-weight: normal; margin-left: 5px; }
+        /* 前の雰囲気に寄せるための微調整 */
+        #custom-ui-container {
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 30px;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            font-family: 'Inter', sans-serif;
+            display: none; /* ロード後に表示 */
+        }
+        .form-group { margin-bottom: 25px; }
+        .form-group label { 
+            display: block; 
+            font-weight: 600; 
+            margin-bottom: 8px; 
+            color: #4a5568; 
+            font-size: 0.9rem;
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            background-color: #f8fafc;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        .form-group textarea:focus {
+            background-color: #fff;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            outline: none;
+        }
+        .submit-btn {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white;
+            border: none;
+            padding: 16px;
+            width: 100%;
+            border-radius: 14px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+        .section-title {
+            font-size: 1.2rem;
+            color: #1e293b;
+            margin: 40px 0 20px 0;
+            border-left: 4px solid #6366f1;
+            padding-left: 12px;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>SBIフィードバック作成</h1>
-        
-        <h2>Step 1: 基本情報</h2>
-        <div class="section grid">
-            <div>
-                <label>被評価者名</label>
-                <input type="text" id="subjectName" placeholder="例：田中 太郎">
+    <div id="root"></div>
+
+    <div id="custom-ui-container">
+        <h1 style="text-align: center; margin-bottom: 40px; color: #1e293b;">SBI Feedback Form</h1>
+
+        <div class="section-title">基本情報</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="form-group">
+                <label>被評価者</label>
+                <input type="text" id="subjectName" placeholder="氏名">
             </div>
-            <div>
-                <label>評価者名</label>
-                <input type="text" id="evaluatorName" placeholder="例：佐藤 次郎">
+            <div class="form-group">
+                <label>評価者</label>
+                <input type="text" id="evaluatorName" placeholder="氏名">
             </div>
         </div>
 
-        <h2>Step 2: 事前準備（マインドセット）</h2>
-        <div class="section">
-            <label>面談の目的・ゴール設定<span class="hint">※どのような状態を目指して面談しますか？</span></label>
-            <textarea id="preGoal" placeholder="例：本人の育成意欲を高め、次期のリーダー候補としての自覚を持ってもらう"></textarea>
+        <div class="section-title">事前準備 & メモ</div>
+        <div class="form-group">
+            <label>面談の目的・留意点</label>
+            <textarea id="preNote" placeholder="ゴールや配慮すべきこと"></textarea>
         </div>
-        <div class="section">
-            <label>配慮すべき事項<span class="hint">※性格や最近の状況など</span></label>
-            <textarea id="preNote" placeholder="例：最近自信を落としている様子なので、まずは肯定的な事実から伝える"></textarea>
-        </div>
-
-        <h2>Step 3: 情報収集（対話の記録）</h2>
-        <div class="section grid">
-            <div>
-                <label>本人の振り返り（本人談）</label>
-                <textarea id="selfReview" placeholder="本人が「できた」「できなかった」と感じていることは？"></textarea>
-            </div>
-            <div>
-                <label>評価者の観察メモ（事実）</label>
-                <textarea id="observerMemo" placeholder="実際に起きていた客観的な事実は？（数値や行動）"></textarea>
-            </div>
+        <div class="form-group">
+            <label>本人の振り返り / 評価者メモ</label>
+            <textarea id="combinedMemo" style="height: 150px;" placeholder="対話の中で出た重要な事実をメモ..."></textarea>
         </div>
 
-        <h2>Step 4: コンピテンシー特定</h2>
-        <div class="section">
-            <label>対象カテゴリー</label>
+        <div class="section-title">SBIフィードバック作成</div>
+        <div class="form-group">
+            <label>コンピテンシーカテゴリー</label>
             <select id="competency-select">
                 <optgroup label="マネジメント力">
                     <option value="マネジメント力:リーダーシップ">リーダーシップ</option>
                     <option value="マネジメント力:育成力">育成力</option>
-                    <option value="マネジメント力:チームワーク">チームワーク</option>
-                </optgroup>
-                <optgroup label="知的属性">
-                    <option value="知的属性:分析的思考力">分析的思考力</option>
-                    <option value="知的属性:概念的思考力">概念的思考力</option>
                 </optgroup>
                 <optgroup label="対人関係性">
                     <option value="対人関係性:対人影響力">対人影響力</option>
-                    <option value="対人関係性:対人理解力">対人理解力</option>
+                    <option value="対人関係性:関係構築力">関係構築力</option>
                 </optgroup>
                 <optgroup label="自己内面属性">
                     <option value="自己内面属性:イニシアティブ">イニシアティブ</option>
@@ -82,58 +109,38 @@
             </select>
         </div>
 
-        <h2>Step 5: SBIモデルによる言語化</h2>
-        <div class="section">
-            <label>【S】状況 (Situation)</label>
-            <textarea id="situation" placeholder="いつ、どこで、どんな場面でしたか？"></textarea>
+        <div class="form-group">
+            <label>S: 状況</label>
+            <textarea id="situation"></textarea>
         </div>
-        <div class="section">
-            <label>【B】行動 (Behavior)</label>
-            <textarea id="behavior" placeholder="具体的にどんな行動をとりましたか？（動詞で記載）"></textarea>
+        <div class="form-group">
+            <label>B: 行動</label>
+            <textarea id="behavior"></textarea>
         </div>
-        <div class="section">
-            <label>【I】影響 (Impact)</label>
-            <textarea id="impact" placeholder="その結果、周囲や組織にどんな影響がありましたか？"></textarea>
+        <div class="form-group">
+            <label>I: 影響</label>
+            <textarea id="impact"></textarea>
         </div>
 
-        <button class="btn" id="saveBtn">この内容でドキュメントを作成</button>
+        <button class="submit-btn" id="saveBtn">Googleドライブに保存</button>
     </div>
 
     <script>
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbx6fw6K2gW_M7VawyecP1tsJ8PX2eKiDqZiijy-4PqM7atJQ9QcEauhfDip6xMOwkbTug/exec"; // ★ここを書き換えてください
+        const GAS_URL = "あなたのGASのURL";
+
+        function showCustomUI() {
+            const container = document.getElementById('custom-ui-container');
+            // 元のボタン（フィードバック出力）が消えたタイミングなどで出すか、
+            // あるいは常に出しておく設定にします。
+            if (container) container.style.display = 'block';
+        }
+
+        // ページ読み込み後に実行
+        window.addEventListener('load', () => {
+            setTimeout(showCustomUI, 1000);
+        });
 
         document.getElementById('saveBtn').addEventListener('click', async () => {
             const btn = document.getElementById('saveBtn');
             const data = {
-                subjectName: document.getElementById('subjectName').value,
-                evaluatorName: document.getElementById('evaluatorName').value,
-                preGoal: document.getElementById('preGoal').value,
-                preNote: document.getElementById('preNote').value,
-                selfReview: document.getElementById('selfReview').value,
-                observerMemo: document.getElementById('observerMemo').value,
-                competency: document.getElementById('competency-select').value,
-                situation: document.getElementById('situation').value,
-                behavior: document.getElementById('behavior').value,
-                impact: document.getElementById('impact').value
-            };
-
-            btn.textContent = "送信中...";
-            btn.disabled = true;
-
-            try {
-                await fetch(GAS_URL, {
-                    method: "POST",
-                    mode: "no-cors",
-                    body: JSON.stringify(data)
-                });
-                alert("Googleドライブに「SBIフィードバックシート」を保存しました！");
-            } catch (e) {
-                alert("保存に失敗しました。");
-            } finally {
-                btn.textContent = "この内容でドキュメントを作成";
-                btn.disabled = false;
-            }
-        });
-    </script>
-</body>
-</html>
+                subjectName: document
