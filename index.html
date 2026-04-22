@@ -15,55 +15,53 @@
   </head>
   <body>
     <div id="root"></div>
-    <script>
-// 【ここ！！】コピーした /exec で終わるURLをここに貼り付けてください
-  const GAS_URL = "https://script.google.com/macros/s/AKfycby-D-mB6SvYp1g11nKV1hbDtj2mSAkzrcpnYNNiUoTe1-XHxQ7yop9yrfvuP_3Js_hZYg/exec"; 
+   <script>
+  const GAS_URL = "あなたのGASのURLをここに貼る"; // ←ここ、確認してくださいね！
 
-  window.addEventListener('load', () => {
-      // 「フィードバック出力」ボタンを探す（緑色のボタンを想定）
-      // あなたのツールのボタン構成に合わせて調整が必要な場合があります
-      const buttons = document.querySelectorAll('button');
-      const targetBtn = Array.from(buttons).find(b => b.textContent.includes('フィードバック出力'));
+  // ページが完全に読み込まれた後、何度もボタンをチェックする仕組み
+  function setupDriveSave() {
+    const buttons = document.querySelectorAll('button');
+    const targetBtn = Array.from(buttons).find(b => b.textContent.includes('フィードバック出力'));
 
-      if (targetBtn) {
-        // 元のボタンの動き（ダウンロードなど）を止めて、GASに送るようにする
-        targetBtn.onclick = async (e) => {
-          e.preventDefault();
-          e.stopPropagation();
+    if (targetBtn) {
+      // 古いイベントを無効化するために、ボタンを一度複製して置き換える（最強の初期化）
+      const newBtn = targetBtn.cloneNode(true);
+      targetBtn.parentNode.replaceChild(newBtn, targetBtn);
 
-          // 入力欄から値を取得する
-          // ツール上のプレースホルダー名などから推測して取得
-          const data = {
-            subjectName: document.querySelector('input[placeholder*="被評価者"]')?.value || "未入力",
-            evaluatorName: document.querySelector('input[placeholder*="評価者"]')?.value || "未入力",
-            situation: document.querySelectorAll('textarea')[0]?.value || "未入力",
-            behavior: document.querySelectorAll('textarea')[1]?.value || "未入力",
-            impact: document.querySelectorAll('textarea')[2]?.value || "未入力"
-          };
+      newBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
 
-          targetBtn.textContent = "保存中...";
-          targetBtn.disabled = true;
-
-          // --- 修正後のイメージ ---
-
-try {
-  // ここは GAS_URL という名前だけにする（URLを直接書かない）
-  await fetch(GAS_URL, {
-    method: "POST",
-    mode: "no-cors",
-    body: JSON.stringify(data)
-  });
-  alert("Googleドライブに保存しました！");
-} catch (err) {
-// ...
-            alert("エラーが発生しました。");
-          } finally {
-            targetBtn.textContent = "フィードバック出力";
-            targetBtn.disabled = false;
-          }
+        const data = {
+          subjectName: document.querySelector('input[placeholder*="被評価者"]')?.value || "未入力",
+          evaluatorName: document.querySelector('input[placeholder*="評価者"]')?.value || "未入力",
+          situation: document.querySelectorAll('textarea')[0]?.value || "未入力",
+          behavior: document.querySelectorAll('textarea')[1]?.value || "未入力",
+          impact: document.querySelectorAll('textarea')[2]?.value || "未入力"
         };
-      }
-    });
-  </script>
-  </body>
-</html>
+
+        newBtn.textContent = "ドライブに保存中...";
+        newBtn.disabled = true;
+
+        try {
+          await fetch(GAS_URL, {
+            method: "POST",
+            mode: "no-cors",
+            body: JSON.stringify(data)
+          });
+          alert("Googleドライブに保存しました！");
+        } catch (err) {
+          alert("通信エラーが発生しました。");
+        } finally {
+          newBtn.textContent = "フィードバック出力";
+          newBtn.disabled = false;
+        }
+      }, true);
+      console.log("Drive Save Ready!");
+    }
+  }
+
+  // 読み込み時と、少し遅れて実行（確実性を高める）
+  window.addEventListener('load', setupDriveSave);
+  setTimeout(setupDriveSave, 2000); 
+</script>
