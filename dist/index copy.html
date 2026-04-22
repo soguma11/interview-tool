@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>interview-tool</title>
+    <script type="module" crossorigin src="/assets/index-B1bG087U.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-Bh8Lb5WX.css">
+    <title>面接練習ツール（あなたのツール名）</title>
+<meta name="description" content="面接の振り返りを効率化するツールです。">
+<meta property="og:title" content="面接練習ツール">
+<meta property="og:description" content="現場で使えるSBIモデルに基づいた振り返りツール。">
+<meta property="og:type" content="website">
+  </head>
+  <body>
+    <div id="root"></div>
+   <script>
+  const GAS_URL = "あなたのGASのURLをここに貼る"; // ←ここ、確認してくださいね！
+
+  // ページが完全に読み込まれた後、何度もボタンをチェックする仕組み
+  function setupDriveSave() {
+    const buttons = document.querySelectorAll('button');
+    const targetBtn = Array.from(buttons).find(b => b.textContent.includes('フィードバック出力'));
+
+    if (targetBtn) {
+      // 古いイベントを無効化するために、ボタンを一度複製して置き換える（最強の初期化）
+      const newBtn = targetBtn.cloneNode(true);
+      targetBtn.parentNode.replaceChild(newBtn, targetBtn);
+
+      newBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const data = {
+          subjectName: document.querySelector('input[placeholder*="被評価者"]')?.value || "未入力",
+          evaluatorName: document.querySelector('input[placeholder*="評価者"]')?.value || "未入力",
+          situation: document.querySelectorAll('textarea')[0]?.value || "未入力",
+          behavior: document.querySelectorAll('textarea')[1]?.value || "未入力",
+          impact: document.querySelectorAll('textarea')[2]?.value || "未入力"
+        };
+
+        newBtn.textContent = "ドライブに保存中...";
+        newBtn.disabled = true;
+
+        try {
+          await fetch(GAS_URL, {
+            method: "POST",
+            mode: "no-cors",
+            body: JSON.stringify(data)
+          });
+          alert("Googleドライブに保存しました！");
+        } catch (err) {
+          alert("通信エラーが発生しました。");
+        } finally {
+          newBtn.textContent = "フィードバック出力";
+          newBtn.disabled = false;
+        }
+      }, true);
+      console.log("Drive Save Ready!");
+    }
+  }
+
+  // 読み込み時と、少し遅れて実行（確実性を高める）
+  window.addEventListener('load', setupDriveSave);
+  setTimeout(setupDriveSave, 2000); 
+</script>
