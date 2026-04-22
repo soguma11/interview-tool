@@ -1,67 +1,93 @@
 <!doctype html>
-<html lang="en">
+<html lang="ja">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>interview-tool</title>
+    <title>面接練習ツール</title>
     <script type="module" crossorigin src="/assets/index-B1bG087U.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-Bh8Lb5WX.css">
-    <title>面接練習ツール（あなたのツール名）</title>
-<meta name="description" content="面接の振り返りを効率化するツールです。">
-<meta property="og:title" content="面接練習ツール">
-<meta property="og:description" content="現場で使えるSBIモデルに基づいた振り返りツール。">
-<meta property="og:type" content="website">
+    <meta name="description" content="面接の振り返りを効率化するツールです。">
   </head>
   <body>
     <div id="root"></div>
-   <script>
-  const GAS_URL = "https://script.google.com/macros/s/AKfycbw-HCLiI7UB7BrpuULPir0Rg73z2rat9Y6rjPoomOJcPPi-wksCp9wwlBEq13yKVjcpHw/exec"; // ←ここ、確認してくださいね！
 
-  // ページが完全に読み込まれた後、何度もボタンをチェックする仕組み
-  function setupDriveSave() {
-    const buttons = document.querySelectorAll('button');
-    const targetBtn = Array.from(buttons).find(b => b.textContent.includes('フィードバック出力'));
+    <div id="competency-container" style="max-width: 600px; margin: 20px auto; padding: 0 20px; font-family: sans-serif; display: none;">
+      <label style="font-weight: bold; font-size: 0.9em; color: #333;">発揮能力（コンピテンシー）：</label><br>
+      <select id="competency-select" style="width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc; background-color: white;">
+        <optgroup label="マネジメント力">
+          <option value="マネジメント力:リーダーシップ">リーダーシップ</option>
+          <option value="マネジメント力:育成力">育成力</option>
+          <option value="マネジメント力:チームワーク">チームワーク</option>
+        </optgroup>
+        <optgroup label="知的属性">
+          <option value="知的属性:分析的思考力">分析的思考力</option>
+          <option value="知的属性:概念的思考力">概念的思考力</option>
+          <option value="知的属性:情報指向性">情報指向性</option>
+        </optgroup>
+        <optgroup label="対人関係性">
+          <option value="対人関係性:対人影響力">対人影響力</option>
+          <option value="対人関係性:対人理解力">対人理解力</option>
+          <option value="対人関係性:関係構築力">関係構築力</option>
+        </optgroup>
+        <optgroup label="自己内面属性">
+          <option value="自己内面属性:イニシアティブ">イニシアティブ</option>
+          <option value="自己内面属性:柔軟性">柔軟性</option>
+          <option value="自己内面属性:誠実性">誠実性</option>
+        </optgroup>
+      </select>
+    </div>
 
-    if (targetBtn) {
-      // 古いイベントを無効化するために、ボタンを一度複製して置き換える（最強の初期化）
-      const newBtn = targetBtn.cloneNode(true);
-      targetBtn.parentNode.replaceChild(newBtn, targetBtn);
+    <script>
+      const GAS_URL = "https://script.google.com/macros/s/AKfycbw-HCLiI7UB7BrpuULPir0Rg73z2rat9Y6rjPoomOJcPPi-wksCp9wwlBEq13yKVjcpHw/exec";
 
-      newBtn.addEventListener('click', async (e) => {
-        e.preventDefault();
-        e.stopPropagation();
+      function setupDriveSave() {
+        const buttons = document.querySelectorAll('button');
+        const targetBtn = Array.from(buttons).find(b => b.textContent.includes('フィードバック出力'));
 
-        const data = {
-          subjectName: document.querySelector('input[placeholder*="被評価者"]')?.value || "未入力",
-          evaluatorName: document.querySelector('input[placeholder*="評価者"]')?.value || "未入力",
-          situation: document.querySelectorAll('textarea')[0]?.value || "未入力",
-          behavior: document.querySelectorAll('textarea')[1]?.value || "未入力",
-          impact: document.querySelectorAll('textarea')[2]?.value || "未入力"
-        };
+        // プルダウンを表示させる（元のアプリが読み込まれたら出す）
+        const compContainer = document.getElementById('competency-container');
+        if (compContainer) compContainer.style.display = 'block';
 
-        newBtn.textContent = "ドライブに保存中...";
-        newBtn.disabled = true;
+        if (targetBtn) {
+          const newBtn = targetBtn.cloneNode(true);
+          targetBtn.parentNode.replaceChild(newBtn, targetBtn);
 
-        try {
-          await fetch(GAS_URL, {
-            method: "POST",
-            mode: "no-cors",
-            body: JSON.stringify(data)
-          });
-          alert("Googleドライブに保存しました！");
-        } catch (err) {
-          alert("通信エラーが発生しました。");
-        } finally {
-          newBtn.textContent = "フィードバック出力";
-          newBtn.disabled = false;
+          newBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const data = {
+              subjectName: document.querySelector('input[placeholder*="被評価者"]')?.value || "未入力",
+              evaluatorName: document.querySelector('input[placeholder*="評価者"]')?.value || "未入力",
+              situation: document.querySelectorAll('textarea')[0]?.value || "未入力",
+              behavior: document.querySelectorAll('textarea')[1]?.value || "未入力",
+              impact: document.querySelectorAll('textarea')[2]?.value || "未入力",
+              competency: document.getElementById('competency-select').value
+            };
+
+            newBtn.textContent = "ドライブに保存中...";
+            newBtn.disabled = true;
+
+            try {
+              await fetch(GAS_URL, {
+                method: "POST",
+                mode: "no-cors",
+                body: JSON.stringify(data)
+              });
+              alert("カテゴリー付きでGoogleドライブに保存しました！");
+            } catch (err) {
+              alert("通信エラーが発生しました。");
+            } finally {
+              newBtn.textContent = "フィードバック出力";
+              newBtn.disabled = false;
+            }
+          }, true);
         }
-      }, true);
-      console.log("Drive Save Ready!");
-    }
-  }
+      }
 
-  // 読み込み時と、少し遅れて実行（確実性を高める）
-  window.addEventListener('load', setupDriveSave);
-  setTimeout(setupDriveSave, 2000); 
-</script>
+      window.addEventListener('load', setupDriveSave);
+      setInterval(setupDriveSave, 3000); // 念のため定期的にチェック
+    </script>
+  </body>
+</html>
